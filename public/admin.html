@@ -1,56 +1,47 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>CuboMatch — Admin</title>
   <style>
-    body { font-family: Arial, sans-serif; margin:0; background:#0b0b0b; color:#fff; }
-    header { padding:14px 16px; background:#111; display:flex; gap:10px; align-items:center; }
-    .pill { padding:6px 10px; border-radius:999px; background:#222; font-size:14px; }
-    main { padding:16px; max-width: 900px; margin: 0 auto; display:grid; gap:14px; }
-    textarea { width:100%; min-height: 160px; background:#121212; color:#fff; border:1px solid #333; border-radius:10px; padding:12px; }
-    select, button { padding:12px; border-radius:10px; border:1px solid #333; background:#121212; color:#fff; }
-    button { cursor:pointer; font-weight: 800; }
-    button:hover { background:#1a1a1a; }
-    .row { display:flex; gap:10px; flex-wrap: wrap; }
-    a { color:#9ad; }
+    body{font-family:Arial;margin:0;background:#0b0b0b;color:#fff}
+    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center}
+    .pill{padding:6px 10px;border-radius:999px;background:#222;font-size:14px}
+    main{padding:16px;max-width:900px;margin:0 auto;display:grid;gap:12px}
+    button{padding:12px;border-radius:10px;border:1px solid #333;background:#121212;color:#fff;font-weight:900;cursor:pointer}
+    button:hover{background:#1a1a1a}
+    .card{background:#121212;border:1px solid #222;border-radius:12px;padding:14px}
+    .muted{opacity:.75;font-size:13px}
+    ul{margin:8px 0 0 18px}
+    a{color:#9ad}
   </style>
 </head>
 <body>
-  <header>
-    <div class="pill">CuboMatch — Admin (embaralhador/organização)</div>
-    <div class="pill" id="conn">Conectando…</div>
-    <a class="pill" href="/">Telão</a>
-    <a class="pill" href="/competitor.html">Tela do competidor</a>
-  </header>
+<header>
+  <div class="pill">CuboMatch — Admin</div>
+  <div class="pill" id="conn">Conectando…</div>
+  <a class="pill" href="/">Telão</a>
+  <a class="pill" href="/join.html">Entrar</a>
+</header>
 
-  <main>
-    <div>
-      <div style="opacity:.85; margin-bottom:8px;">
-        Cole os nomes (1 por linha). Isso define a rodada e já aparece no telão com 5 solves.
-      </div>
-      <textarea id="names" placeholder="Ex:\nAllan\nDilan\nMaria\nJoão"></textarea>
-      <div class="row" style="margin-top:10px;">
-        <button id="btnSet">Cadastrar rodada</button>
-        <button id="btnReset">Resetar tudo</button>
-      </div>
+<main>
+  <div class="card">
+    <div><b>Fase:</b> <span id="phase">—</span></div>
+    <div class="muted">1) Pessoas entram em /join.html. 2) Você aprova. 3) Você inicia.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button id="btnApprove">OK: fechar lista e gerar duplas</button>
+      <button id="btnStart">Iniciar rodada (liberar embaralhamento)</button>
+      <button id="btnReset">RESET geral</button>
     </div>
+  </div>
 
-    <div style="border:1px solid #222; border-radius:12px; padding:14px;">
-      <div style="opacity:.85; margin-bottom:10px;">
-        Selecione o competidor e clique em <b>LIBERAR SOLVE</b> (equivale: scramble validado / foto ok).
-      </div>
-      <div class="row">
-        <select id="sel"></select>
-        <button id="btnArm">LIBERAR SOLVE</button>
-      </div>
-      <div style="opacity:.7; margin-top:10px; font-size:13px;">
-        Após liberar: 5s entrega + vermelho/amarelo/verde (15s) e então o tempo começa sozinho.
-      </div>
-    </div>
-  </main>
+  <div class="card">
+    <b>Competidores cadastrados:</b>
+    <ul id="list"></ul>
+  </div>
+</main>
 
-  <script src="/admin.js"></script>
+<script src="/admin.js"></script>
 </body>
 </html>
