@@ -6,39 +6,44 @@
   <title>CuboMatch — Embaralhar</title>
   <style>
     body{font-family:Arial;margin:0;background:#0b0b0b;color:#fff}
-    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center}
+    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .pill{padding:6px 10px;border-radius:999px;background:#222;font-size:14px}
-    main{padding:16px;max-width:720px;margin:0 auto;display:grid;gap:12px}
+    a.pill{color:#9ad;text-decoration:none}
+    main{padding:16px;max-width:860px;margin:0 auto;display:grid;gap:12px}
     .card{background:#121212;border:1px solid #222;border-radius:12px;padding:14px}
+    .muted{opacity:.75;font-size:13px}
     .big{font-size:18px;font-weight:900}
-    .scr{font-size:22px;font-weight:900;line-height:1.35;word-break:break-word}
+    .scr{font-size:24px;font-weight:900;line-height:1.35;word-break:break-word}
     button{padding:12px;border-radius:10px;border:1px solid #333;background:#121212;color:#fff;font-weight:900;cursor:pointer}
     button:disabled{opacity:.45;cursor:not-allowed}
-    a{color:#9ad}
-    .muted{opacity:.75;font-size:13px}
+    .ok{color:#9f9}
+    .bad{color:#f99}
   </style>
 </head>
 <body>
 <header>
-  <div class="pill">CuboMatch — Embaralhar</div>
+  <div class="pill">Embaralhar</div>
   <div class="pill" id="conn">Conectando…</div>
   <a class="pill" href="/join.html">Entrar</a>
   <a class="pill" href="/">Telão</a>
+  <a class="pill" href="/competitor.html">Competidor</a>
 </header>
 
 <main>
   <div class="card">
-    <div class="muted">Você precisa ter entrado antes em /join.html no MESMO celular.</div>
-    <div class="big" id="who">Aguardando rodada…</div>
+    <div class="muted">Você precisa ter entrado em <b>/join.html</b> neste mesmo celular.</div>
+    <div class="big" id="status">Aguardando rodada…</div>
   </div>
 
   <div class="card">
-    <div class="muted">Scramble para o seu par:</div>
+    <div class="muted">Você embaralha para:</div>
+    <div class="big" id="target">—</div>
+
+    <div class="muted" style="margin-top:12px;">Scramble:</div>
     <div class="scr" id="scramble">—</div>
-    <button id="btn" disabled>CONFIRMAR EMBARALHAMENTO</button>
-    <div class="muted" style="margin-top:10px;">
-      Ao confirmar: o tempo do seu par começa automaticamente (entrega → cores → timer).
-    </div>
+
+    <button id="btn" disabled style="margin-top:12px;">CONFIRMAR EMBARALHAMENTO</button>
+    <div id="msg" class="muted" style="margin-top:10px;"></div>
   </div>
 </main>
 
