@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>CuboMatch — Entrar</title>
+  <style>
+    body{font-family:Arial;margin:0;background:#0b0b0b;color:#fff}
+    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center}
+    .pill{padding:6px 10px;border-radius:999px;background:#222;font-size:14px}
+    main{padding:16px;max-width:520px;margin:0 auto;display:grid;gap:12px}
+    input,button{padding:12px;border-radius:10px;border:1px solid #333;background:#121212;color:#fff;font-size:16px}
+    button{cursor:pointer;font-weight:800}
+    .msg{opacity:.85;font-size:14px;line-height:1.4}
+    a{color:#9ad}
+  </style>
+</head>
+<body>
+<header>
+  <div class="pill">CuboMatch — Entrar</div>
+  <div class="pill" id="conn">Conectando…</div>
+  <a class="pill" href="/">Telão</a>
+</header>
+<main>
+  <div class="msg">
+    Digite seu nome (sem duplicidade). Depois de entrar, você usa:
+    <br>• <b>Scramble</b> para embaralhar pro seu par
+    <br>• <b>Competidor</b> para resolver e apertar PAUSE
+  </div>
+
+  <input id="name" placeholder="Seu nome (ex: Allan)" maxlength="40"/>
+  <button id="btn">Entrar</button>
+
+  <div class="msg" id="out"></div>
+
+  <div class="msg">
+    Links:
+    <br>• <a href="/scramble.html">Tela do embaralhador</a>
+    <br>• <a href="/competitor.html">Tela do competidor</a>
+    <br>• <a href="/admin.html">Admin (aprovar/iniciar)</a>
+  </div>
+</main>
+
+<script src="/join.js"></script>
+</body>
+</html>
