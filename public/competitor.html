@@ -4,45 +4,49 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CuboMatch — Competidor</title>
-  <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#111111">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background:#0b0b0b; color:#fff; }
-    header { padding: 14px 16px; display:flex; gap:12px; align-items:center; background:#111; position: sticky; top:0; }
+    body { font-family: Arial, sans-serif; margin:0; background:#0b0b0b; color:#fff; }
+    header { padding:14px 16px; background:#111; display:flex; gap:10px; align-items:center; position: sticky; top:0; }
     .pill { padding:6px 10px; border-radius:999px; background:#222; font-size:14px; }
-    main { padding: 16px; display:grid; gap: 12px; max-width: 520px; margin: 0 auto; }
-    input { width:100%; padding: 12px; border-radius:10px; border:1px solid #333; background:#121212; color:#fff; font-size:16px; }
-    .big { font-size: 52px; font-weight: 800; }
-    .btn { padding: 16px; border-radius: 14px; border: 0; font-size: 18px; font-weight: 800; cursor:pointer; }
+    a { color:#9ad; }
+    main { padding:16px; max-width: 520px; margin:0 auto; display:grid; gap:12px; }
+    select { width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#121212; color:#fff; font-size:16px; }
+    .big { font-size: 56px; font-weight: 900; text-align:center; }
+    .note { opacity:.85; font-size:14px; text-align:center; }
+    .btn { padding:16px; border-radius:14px; border:0; font-size:18px; font-weight:900; cursor:pointer; }
     .pause { background:#ff3355; color:#fff; }
-    .pause:hover { filter: brightness(1.05); }
-    .note { opacity:.8; font-size: 14px; line-height: 1.4; }
+    .pause:disabled { opacity:.45; cursor:not-allowed; }
+    .box { border:1px solid #222; background:#121212; border-radius:12px; padding:14px; }
+    .color { height: 16px; border-radius: 999px; border:1px solid #333; }
   </style>
 </head>
 <body>
   <header>
     <div class="pill">CuboMatch — Competidor</div>
     <div class="pill" id="conn">Conectando…</div>
-    <a class="pill" href="/">Voltar ao telão</a>
+    <a class="pill" href="/">Telão</a>
+    <a class="pill" href="/admin.html">Admin</a>
   </header>
 
   <main>
-    <div class="note">Digite seu nome (ou apelido). Depois, quando terminar o solve, aperte <b>PAUSE</b>.</div>
-    <input id="name" placeholder="Seu nome" maxlength="40" />
+    <div class="box">
+      <div class="note">Escolha seu nome (definido pelo Admin da rodada)</div>
+      <select id="sel"></select>
+    </div>
 
-    <div class="big" id="time">0.00</div>
-    <div class="note" id="status">Status: idle</div>
+    <div class="box">
+      <div class="color" id="bar"></div>
+      <div class="big" id="time">—</div>
+      <div class="note" id="status">Aguardando liberação do embaralhador</div>
+    </div>
 
-    <button class="btn pause" id="btnPause">PAUSE</button>
+    <button class="btn pause" id="btnPause" disabled>PAUSE</button>
 
     <div class="note">
-      No MVP v1, o START/RESET ficam no telão (organização).
-      Depois a gente cria o fluxo completo (scramble, troca de cubo, etc.).
+      Você só pode apertar PAUSE quando o tempo estiver rodando.
     </div>
   </main>
 
-  <script src="/pwa.js"></script>
-  <script src="/app.js"></script>
+  <script src="/competitor.js"></script>
 </body>
 </html>
-
