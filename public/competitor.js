@@ -1,122 +1,148 @@
 const connEl = document.getElementById("conn");
-const sel = document.getElementById("sel");
-const timeEl = document.getElementById("time");
-const statusEl = document.getElementById("status");
-const bar = document.getElementById("bar");
-const btnPause = document.getElementById("btnPause");
+const meNameEl = document.getElementById("meName");
+const screenEl = document.getElementById("screen");
+const phaseEl = document.getElementById("phaseText");
+const countdownEl = document.getElementById("countdown");
+const timerEl = document.getElementById("timer");
+const pauseBtn = document.getElementById("pauseBtn");
+const hintEl = document.getElementById("hint");
+
+function getDeviceId() {
+  return localStorage.getItem("cubomatch_deviceId");
+}
+const deviceId = getDeviceId();
 
 const wsProto = location.protocol === "https:" ? "wss" : "ws";
 const ws = new WebSocket(`${wsProto}://${location.host}`);
 
-let competitors = [];
 let myId = null;
+let lastState = null;
 
-ws.addEventListener("open", () => connEl.textContent = "Online");
-ws.addEventListener("close", () => connEl.textContent = "Offline");
-
-ws.addEventListener("message", (ev) => {
-  const msg = JSON.parse(ev.data);
-  if (msg.type !== "STATE") return;
-
-  competitors = msg.competitors || [];
-  renderSelect();
-
-  const me = competitors.find(c => c.id === myId) || null;
-  updateMe(me);
-});
-
-function send(type, extra = {}) {
-  if (ws.readyState !== 1) return;
-  ws.send(JSON.stringify({ type, ...extra }));
+function setScreenClass(kind) {
+  screenEl.classList.remove("red","yellow","green","neutral");
+  if (kind === "red") screenEl.classList.add("red");
+  else if (kind === "yellow") screenEl.classList.add("yellow");
+  else if (kind === "green") screenEl.classList.add("green");
+  else screenEl.classList.add("neutral");
 }
 
-function renderSelect() {
-  const current = sel.value || myId || "";
-  sel.innerHTML = "";
+function render() {
+  if (!lastState) return;
 
-  for (const c of competitors) {
-    const opt = document.createElement("option");
-    opt.value = c.id;
-    opt.textContent = c.name;
-    sel.appendChild(opt);
-  }
-
-  // tenta manter seleção
-  if (current) sel.value = current;
-
-  myId = sel.value || (competitors[0]?.id ?? null);
-}
-
-sel.addEventListener("change", () => {
-  myId = sel.value;
-});
-
-btnPause.onclick = () => {
-  if (!myId) return;
-  send("PAUSE", { id: myId });
-};
-
-function setBar(color) {
-  if (color === "red") bar.style.background = "#ff3355";
-  else if (color === "yellow") bar.style.background = "#ffd54a";
-  else if (color === "green") bar.style.background = "#4cff88";
-  else if (color === "running") bar.style.background = "#66aaff";
-  else bar.style.background = "#222";
-}
-
-function updateMe(me) {
-  if (!me || !me.live) {
-    timeEl.textContent = "—";
-    statusEl.textContent = "Aguardando liberação do embaralhador";
-    setBar("none");
-    btnPause.disabled = true;
+  if (!deviceId) {
+    meNameEl.textContent = "Entre primeiro em /join.html neste celular.";
+    phaseEl.textContent = "Aguardando…";
+    timerEl.textContent = "0.00";
+    countdownEl.textContent = "";
+    hintEl.textContent = "";
+    pauseBtn.disabled = true;
+    setScreenClass("neutral");
     return;
   }
 
-  const live = me.live;
+  if (!myId) {
+    meNameEl.textContent = "Identificando…";
+    phaseEl.textContent = "Aguardando…";
+    timerEl.textContent = "0.00";
+    countdownEl.textContent = "";
+    hintEl.textContent = "Se não entrou, vá em /join.html";
+    pauseBtn.disabled = true;
+    setScreenClass("neutral");
+    return;
+  }
+
+  const me = (lastState.competitors || []).find(c => c.id === myId);
+  if (!me) {
+    meNameEl.textContent = "Você não está cadastrado nesta rodada.";
+    hintEl.textContent = "Vá em /join.html e entre com um nome.";
+    pauseBtn.disabled = true;
+    setScreenClass("neutral");
+    return;
+  }
+
+  meNameEl.textContent = me.name;
+
+  if (lastState.phase !== "running") {
+    phaseEl.textContent = "Aguardando o Admin iniciar…";
+    timerEl.textContent = "0.00";
+    countdownEl.textContent = "";
+    hintEl.textContent = `Fase: ${lastState.phase}`;
+    pauseBtn.disabled = true;
+    setScreenClass("neutral");
+    return;
+  }
+
+  const live = me.live || { status: "idle", color: "none" };
+
+  if (live.status === "idle") {
+    phaseEl.textContent = "Aguardando scramble do seu par…";
+    timerEl.textContent = "0.00";
+    countdownEl.textContent = "";
+    hintEl.textContent = "Quando seu par confirmar o embaralhamento, as cores começam.";
+    pauseBtn.disabled = true;
+    setScreenClass("neutral");
+    return;
+  }
 
   if (live.status === "handoff") {
-    timeEl.textContent = "—";
-    statusEl.textContent = `Entrega do cubo: ${Math.ceil(live.countdownMs/1000)}s`;
-    setBar("none");
-    btnPause.disabled = true;
+    phaseEl.textContent = "Recebendo cubo…";
+    timerEl.textContent = "0.00";
+    countdownEl.textContent = `Entrega: ${(live.countdownMs/1000).toFixed(1)}s`;
+    hintEl.textContent = "Pegue o cubo quando receber.";
+    pauseBtn.disabled = true;
+    setScreenClass("neutral");
     return;
   }
 
-  if (live.color === "red") {
-    timeEl.textContent = "—";
-    statusEl.textContent = `Vermelho (inspeção): ${Math.ceil(live.countdownMs/1000)}s`;
-    setBar("red");
-    btnPause.disabled = true;
-    return;
-  }
+  if (live.status === "inspect") {
+    phaseEl.textContent = "Inspeção";
+    timerEl.textContent = "0.00";
+    countdownEl.textContent = `Começa em: ${(live.countdownMs/1000).toFixed(1)}s`;
+    hintEl.textContent = "Você pode olhar o cubo. O timer real inicia sozinho.";
+    pauseBtn.disabled = true;
 
-  if (live.color === "yellow") {
-    timeEl.textContent = "—";
-    statusEl.textContent = `Amarelo (inspeção): ${Math.ceil(live.countdownMs/1000)}s`;
-    setBar("yellow");
-    btnPause.disabled = true;
-    return;
-  }
-
-  if (live.color === "green") {
-    timeEl.textContent = "—";
-    statusEl.textContent = `Verde (inspeção): ${Math.ceil(live.countdownMs/1000)}s`;
-    setBar("green");
-    btnPause.disabled = true;
+    if (live.color === "red") setScreenClass("red");
+    else if (live.color === "yellow") setScreenClass("yellow");
+    else if (live.color === "green") setScreenClass("green");
+    else setScreenClass("neutral");
     return;
   }
 
   if (live.status === "running") {
-    timeEl.textContent = live.timeText;
-    statusEl.textContent = "Tempo rodando… termine e aperte PAUSE";
-    setBar("running");
-    btnPause.disabled = false;
+    phaseEl.textContent = "RESOLVENDO";
+    timerEl.textContent = live.timeText || "0.00";
+    countdownEl.textContent = "";
+    hintEl.textContent = "Quando terminar, aperte PAUSE.";
+    pauseBtn.disabled = false;
+    setScreenClass("neutral");
+    return;
+  }
+}
+
+ws.addEventListener("open", () => {
+  connEl.textContent = "Online";
+  if (deviceId) ws.send(JSON.stringify({ type: "IDENTIFY", deviceId }));
+});
+ws.addEventListener("close", () => connEl.textContent = "Offline");
+
+ws.addEventListener("message", (ev) => {
+  const msg = JSON.parse(ev.data);
+
+  if (msg.type === "ME") {
+    myId = msg.myId;
+    render();
     return;
   }
 
-  timeEl.textContent = "—";
-  statusEl.textContent = "Aguardando liberação do embaralhador";
-  setBar("none");
-  btnPause.disabled = true;
-}
+  if (msg.type === "STATE") {
+    lastState = msg;
+    render();
+    return;
+  }
+});
+
+pauseBtn.onclick = () => {
+  if (!deviceId) return;
+  pauseBtn.disabled = true;
+  ws.send(JSON.stringify({ type: "PAUSE", deviceId }));
+};
