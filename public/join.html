@@ -6,38 +6,47 @@
   <title>CuboMatch — Entrar</title>
   <style>
     body{font-family:Arial;margin:0;background:#0b0b0b;color:#fff}
-    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center}
+    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .pill{padding:6px 10px;border-radius:999px;background:#222;font-size:14px}
-    main{padding:16px;max-width:520px;margin:0 auto;display:grid;gap:12px}
+    a.pill{color:#9ad;text-decoration:none}
+    main{padding:16px;max-width:720px;margin:0 auto;display:grid;gap:12px}
+    .card{background:#121212;border:1px solid #222;border-radius:12px;padding:14px}
     input,button{padding:12px;border-radius:10px;border:1px solid #333;background:#121212;color:#fff;font-size:16px}
-    button{cursor:pointer;font-weight:800}
+    button{cursor:pointer;font-weight:900}
     .msg{opacity:.85;font-size:14px;line-height:1.4}
-    a{color:#9ad}
+    .ok{color:#9f9}
+    .bad{color:#f99}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
   </style>
 </head>
 <body>
 <header>
-  <div class="pill">CuboMatch — Entrar</div>
+  <div class="pill">CuboMatch</div>
   <div class="pill" id="conn">Conectando…</div>
   <a class="pill" href="/">Telão</a>
+  <a class="pill" href="/scramble.html">Embaralhar</a>
+  <a class="pill" href="/competitor.html">Competidor</a>
+  <a class="pill" href="/admin.html">Admin</a>
 </header>
+
 <main>
-  <div class="msg">
-    Digite seu nome (sem duplicidade). Depois de entrar, você usa:
-    <br>• <b>Scramble</b> para embaralhar pro seu par
-    <br>• <b>Competidor</b> para resolver e apertar PAUSE
+  <div class="card">
+    <b>1) Entrar na rodada</b>
+    <div class="msg">Digite seu nome. Não pode repetir nome já cadastrado.</div>
+    <div class="row" style="margin-top:10px;">
+      <input id="name" placeholder="Seu nome (ex: Allan)" maxlength="40" style="flex:1;min-width:240px"/>
+      <button id="btn">Entrar</button>
+    </div>
+    <div id="out" class="msg" style="margin-top:10px;"></div>
   </div>
 
-  <input id="name" placeholder="Seu nome (ex: Allan)" maxlength="40"/>
-  <button id="btn">Entrar</button>
-
-  <div class="msg" id="out"></div>
-
-  <div class="msg">
-    Links:
-    <br>• <a href="/scramble.html">Tela do embaralhador</a>
-    <br>• <a href="/competitor.html">Tela do competidor</a>
-    <br>• <a href="/admin.html">Admin (aprovar/iniciar)</a>
+  <div class="card">
+    <b>2) Depois de entrar</b>
+    <div class="msg">
+      • Abra <b>Embaralhar</b> para ver o scramble que você faz para o seu par.<br/>
+      • Abra <b>Competidor</b> para ver as cores e apertar <b>PAUSE</b> no final.<br/>
+      • O <b>Admin</b> só faz “OK” e “Iniciar”.
+    </div>
   </div>
 </main>
 
