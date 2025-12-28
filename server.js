@@ -59,10 +59,13 @@ function genScramble(len = 20) {
 // ====== Estado do sistema ======
 const state = {
   phase: "registration", // registration | approved | running
-  competitors: [], // { id, name, deviceId, attempts[], running?, armedAt?, livePhase? }
+  competitors: [], // { id, name, deviceId, attempts[], running?, armedAt?, activeAttemptIndex? }
   pairs: [],       // { aId, bId }
   scrambleJobs: [] // { id, scramblerId, solverId, attemptIndex, scramble, status: pending|confirmed }
 };
+
+// ====== Identificação por conexão (cada aba sabe "quem é") ======
+const wsClientDevice = new Map(); // ws -> deviceId
 
 // ====== Helpers de competidor ======
 function findByDevice(deviceId) {
@@ -103,6 +106,7 @@ function buildPairsAndJobs() {
 
     const aIdx = nextAttemptIndex(a);
     const bIdx = nextAttemptIndex(b);
+
     if (aIdx != null) {
       state.scrambleJobs.push({
         id: `job-${p.bId}-${a.id}-${aIdx}-${now()}`,
@@ -113,6 +117,7 @@ function buildPairsAndJobs() {
         status: "pending"
       });
     }
+
     if (bIdx != null) {
       state.scrambleJobs.push({
         id: `job-${p.aId}-${b.id}-${bIdx}-${now()}`,
@@ -171,9 +176,9 @@ function getLiveInfo(c) {
   return { status: "running", color: "running", countdownMs: 0, timeText: formatMs(timeMs), timeMs };
 }
 
-// ====== Broadcast ======
-function broadcast() {
-  const payload = {
+// ====== Monta STATE (sem expor deviceId) ======
+function buildStatePayload() {
+  return {
     type: "STATE",
     phase: state.phase,
     competitors: state.competitors.map(c => ({
@@ -181,14 +186,18 @@ function broadcast() {
       name: c.name,
       attempts: c.attempts,
       live: getLiveInfo(c),
-      // pra UI mostrar quem está no mesmo par:
       pair: state.pairs.find(p => p.aId === c.id || p.bId === c.id) || null
     })),
     pairs: state.pairs,
     scrambleJobs: state.scrambleJobs
   };
+}
 
+// ====== Broadcast ======
+function broadcast() {
+  const payload = buildStatePayload();
   const msg = JSON.stringify(payload);
+
   for (const client of wss.clients) {
     if (client.readyState === 1) client.send(msg);
   }
@@ -196,24 +205,26 @@ function broadcast() {
 
 // ====== WebSocket ======
 wss.on("connection", (ws) => {
+  wsClientDevice.set(ws, null);
+  ws.on("close", () => wsClientDevice.delete(ws));
+
   ws.send(JSON.stringify({ type: "HELLO" }));
-  ws.send(JSON.stringify({
-    type: "STATE",
-    phase: state.phase,
-    competitors: state.competitors.map(c => ({
-      id: c.id,
-      name: c.name,
-      attempts: c.attempts,
-      live: getLiveInfo(c),
-      pair: state.pairs.find(p => p.aId === c.id || p.bId === c.id) || null
-    })),
-    pairs: state.pairs,
-    scrambleJobs: state.scrambleJobs
-  }));
+  ws.send(JSON.stringify(buildStatePayload()));
 
   ws.on("message", (data) => {
     const msg = safeJson(String(data));
     if (!msg || !msg.type) return;
+
+    // ===== IDENTIFY: a aba informa seu deviceId e o servidor responde ME {myId} =====
+    if (msg.type === "IDENTIFY") {
+      const deviceId = (msg.deviceId || "").toString().trim();
+      wsClientDevice.set(ws, deviceId);
+
+      const me = findByDevice(deviceId);
+      ws.send(JSON.stringify({ type: "ME", myId: me ? me.id : null }));
+      ws.send(JSON.stringify(buildStatePayload()));
+      return;
+    }
 
     // ===== Competidor se registra =====
     if (msg.type === "REGISTER") {
@@ -245,6 +256,7 @@ wss.on("connection", (ws) => {
         running: null
       });
       broadcast();
+      return;
     }
 
     // ===== Admin aprova lista (fecha cadastro) =====
@@ -253,6 +265,7 @@ wss.on("connection", (ws) => {
       state.phase = "approved";
       buildPairsAndJobs();
       broadcast();
+      return;
     }
 
     // ===== Admin inicia rodada (libera embaralhamento) =====
@@ -260,6 +273,7 @@ wss.on("connection", (ws) => {
       if (state.phase !== "approved") return;
       state.phase = "running";
       broadcast();
+      return;
     }
 
     // ===== Embaralhador confirma que embaralhou =====
@@ -286,6 +300,7 @@ wss.on("connection", (ws) => {
 
       job.status = "confirmed";
       broadcast();
+      return;
     }
 
     // ===== Solver dá PAUSE (só dele) =====
@@ -311,6 +326,7 @@ wss.on("connection", (ws) => {
 
       // (depois: aqui a gente cria o próximo job automaticamente para SOLVE 2…5)
       broadcast();
+      return;
     }
 
     // ===== Reset geral (se precisar) =====
@@ -320,6 +336,7 @@ wss.on("connection", (ws) => {
       state.pairs = [];
       state.scrambleJobs = [];
       broadcast();
+      return;
     }
   });
 });
