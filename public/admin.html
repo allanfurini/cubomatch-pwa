@@ -6,20 +6,21 @@
   <title>CuboMatch — Admin</title>
   <style>
     body{font-family:Arial;margin:0;background:#0b0b0b;color:#fff}
-    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center}
+    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .pill{padding:6px 10px;border-radius:999px;background:#222;font-size:14px}
+    a.pill{color:#9ad;text-decoration:none}
     main{padding:16px;max-width:900px;margin:0 auto;display:grid;gap:12px}
+    .card{background:#121212;border:1px solid #222;border-radius:12px;padding:14px}
     button{padding:12px;border-radius:10px;border:1px solid #333;background:#121212;color:#fff;font-weight:900;cursor:pointer}
     button:hover{background:#1a1a1a}
-    .card{background:#121212;border:1px solid #222;border-radius:12px;padding:14px}
     .muted{opacity:.75;font-size:13px}
     ul{margin:8px 0 0 18px}
-    a{color:#9ad}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
   </style>
 </head>
 <body>
 <header>
-  <div class="pill">CuboMatch — Admin</div>
+  <div class="pill">Admin</div>
   <div class="pill" id="conn">Conectando…</div>
   <a class="pill" href="/">Telão</a>
   <a class="pill" href="/join.html">Entrar</a>
@@ -28,16 +29,16 @@
 <main>
   <div class="card">
     <div><b>Fase:</b> <span id="phase">—</span></div>
-    <div class="muted">1) Pessoas entram em /join.html. 2) Você aprova. 3) Você inicia.</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+    <div class="muted">Fluxo: (1) pessoas entram → (2) OK fecha lista/duplas → (3) Iniciar libera scramble.</div>
+    <div class="row" style="margin-top:10px;">
       <button id="btnApprove">OK: fechar lista e gerar duplas</button>
-      <button id="btnStart">Iniciar rodada (liberar embaralhamento)</button>
+      <button id="btnStart">Iniciar rodada</button>
       <button id="btnReset">RESET geral</button>
     </div>
   </div>
 
   <div class="card">
-    <b>Competidores cadastrados:</b>
+    <b>Competidores:</b>
     <ul id="list"></ul>
   </div>
 </main>
