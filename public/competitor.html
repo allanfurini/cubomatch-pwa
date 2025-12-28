@@ -1,52 +1,56 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>CuboMatch — Competidor</title>
   <style>
-    body { font-family: Arial, sans-serif; margin:0; background:#0b0b0b; color:#fff; }
-    header { padding:14px 16px; background:#111; display:flex; gap:10px; align-items:center; position: sticky; top:0; }
-    .pill { padding:6px 10px; border-radius:999px; background:#222; font-size:14px; }
-    a { color:#9ad; }
-    main { padding:16px; max-width: 520px; margin:0 auto; display:grid; gap:12px; }
-    select { width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#121212; color:#fff; font-size:16px; }
-    .big { font-size: 56px; font-weight: 900; text-align:center; }
-    .note { opacity:.85; font-size:14px; text-align:center; }
-    .btn { padding:16px; border-radius:14px; border:0; font-size:18px; font-weight:900; cursor:pointer; }
-    .pause { background:#ff3355; color:#fff; }
-    .pause:disabled { opacity:.45; cursor:not-allowed; }
-    .box { border:1px solid #222; background:#121212; border-radius:12px; padding:14px; }
-    .color { height: 16px; border-radius: 999px; border:1px solid #333; }
+    body{font-family:Arial;margin:0;background:#0b0b0b;color:#fff}
+    header{padding:14px 16px;background:#111;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{padding:6px 10px;border-radius:999px;background:#222;font-size:14px}
+    a.pill{color:#9ad;text-decoration:none}
+    main{padding:16px;max-width:860px;margin:0 auto;display:grid;gap:12px}
+    .card{background:#121212;border:1px solid #222;border-radius:12px;padding:14px}
+    .muted{opacity:.75;font-size:13px}
+    .name{font-size:20px;font-weight:900}
+    .timer{font-size:64px;font-weight:900;letter-spacing:1px}
+    .phase{font-size:18px;font-weight:900}
+    button{padding:16px;border-radius:14px;border:1px solid #333;background:#121212;color:#fff;font-weight:900;cursor:pointer;font-size:18px}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .screen{border-radius:16px;padding:14px;border:1px solid #222}
+    .red{background:#3b0b0b}
+    .yellow{background:#3b330b}
+    .green{background:#0b3b14}
+    .neutral{background:#0f0f0f}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
   </style>
 </head>
 <body>
-  <header>
-    <div class="pill">CuboMatch — Competidor</div>
-    <div class="pill" id="conn">Conectando…</div>
-    <a class="pill" href="/">Telão</a>
-    <a class="pill" href="/admin.html">Admin</a>
-  </header>
+<header>
+  <div class="pill">Competidor</div>
+  <div class="pill" id="conn">Conectando…</div>
+  <a class="pill" href="/join.html">Entrar</a>
+  <a class="pill" href="/">Telão</a>
+  <a class="pill" href="/scramble.html">Embaralhar</a>
+</header>
 
-  <main>
-    <div class="box">
-      <div class="note">Escolha seu nome (definido pelo Admin da rodada)</div>
-      <select id="sel"></select>
+<main>
+  <div class="card">
+    <div class="muted">Você precisa ter entrado em <b>/join.html</b> neste mesmo celular.</div>
+    <div class="name" id="meName">—</div>
+  </div>
+
+  <div class="card screen neutral" id="screen">
+    <div class="row">
+      <div class="phase" id="phaseText">Aguardando…</div>
+      <div class="muted" id="countdown"> </div>
     </div>
+    <div class="timer" id="timer">0.00</div>
+    <button id="pauseBtn" disabled>PAUSE</button>
+    <div class="muted" id="hint" style="margin-top:10px;"></div>
+  </div>
+</main>
 
-    <div class="box">
-      <div class="color" id="bar"></div>
-      <div class="big" id="time">—</div>
-      <div class="note" id="status">Aguardando liberação do embaralhador</div>
-    </div>
-
-    <button class="btn pause" id="btnPause" disabled>PAUSE</button>
-
-    <div class="note">
-      Você só pode apertar PAUSE quando o tempo estiver rodando.
-    </div>
-  </main>
-
-  <script src="/competitor.js"></script>
+<script src="/competitor.js"></script>
 </body>
 </html>
