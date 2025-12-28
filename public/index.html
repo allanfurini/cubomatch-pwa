@@ -1,44 +1,42 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>CuboMatch — Telão</title>
   <style>
-    body { font-family: Arial, sans-serif; margin:0; background:#0b0b0b; color:#fff; }
-    header { padding:14px 16px; background:#111; display:flex; gap:10px; align-items:center; position: sticky; top:0; }
-    .pill { padding:6px 10px; border-radius:999px; background:#222; font-size:14px; }
-    a { color:#9ad; }
-    .wrap { padding:12px; max-width: 1200px; margin:0 auto; }
-    .card { background:#121212; border:1px solid #222; border-radius:12px; padding:14px; margin-bottom:12px; }
-    .name { font-weight: 800; font-size: 18px; }
-    .live { font-weight: 800; font-size: 18px; }
-    .grid { display:grid; grid-template-columns: 1fr; gap:10px; }
-    .attempts { display:flex; gap:8px; flex-wrap: wrap; margin-top:10px; }
-    .chip { border:1px solid #333; background:#0f0f0f; padding:8px 10px; border-radius:10px; font-size:14px; min-width: 96px; text-align:center; }
-    .muted { opacity:.75; font-size:13px; }
-    .tag { padding:4px 8px; border-radius:999px; font-size:12px; margin-left:8px; border:1px solid #333; }
-    .red { background:#3a0b15; border-color:#ff3355; }
-    .yellow { background:#3a320b; border-color:#ffd54a; }
-    .green { background:#0b3a1b; border-color:#4cff88; }
-    .run { background:#10203a; border-color:#66aaff; }
+    body{font-family:Arial;margin:0;background:#070707;color:#fff}
+    header{padding:12px 14px;background:#111;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{padding:6px 10px;border-radius:999px;background:#222;font-size:14px}
+    a.pill{color:#9ad;text-decoration:none}
+    main{padding:14px;max-width:1400px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+    .card{background:#0f0f0f;border:1px solid #222;border-radius:14px;padding:12px}
+    .name{font-weight:900;font-size:18px}
+    .pair{opacity:.75;font-size:12px;margin-top:4px}
+    .live{margin-top:10px;font-size:20px;font-weight:900}
+    .solves{margin-top:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+    .solve{background:#141414;border:1px solid #222;border-radius:10px;padding:8px;text-align:center;font-weight:900}
+    .muted{opacity:.7;font-size:12px}
+    .badge{display:inline-block;padding:3px 8px;border:1px solid #333;border-radius:999px;font-size:12px;opacity:.85}
+    .toprow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
   </style>
 </head>
 <body>
-  <header>
-    <div class="pill">CuboMatch — Telão</div>
-    <div class="pill" id="conn">Conectando…</div>
-    <a class="pill" href="/admin.html">Admin</a>
-    <a class="pill" href="/competitor.html">Competidor</a>
-  </header>
+<header>
+  <div class="pill">Telão</div>
+  <div class="pill" id="conn">Conectando…</div>
+  <div class="pill" id="phase">fase: —</div>
+  <a class="pill" href="/join.html">Entrar</a>
+  <a class="pill" href="/scramble.html">Embaralhar</a>
+  <a class="pill" href="/competitor.html">Competidor</a>
+  <a class="pill" href="/admin.html">Admin</a>
+</header>
 
-  <div class="wrap">
-    <div class="muted" style="margin-bottom:10px;">
-      O telão só exibe. Quem libera solve é o Admin (embaralhador).
-    </div>
-    <div id="list" class="grid"></div>
-  </div>
+<main>
+  <div class="grid" id="grid"></div>
+</main>
 
-  <script src="/telao.js"></script>
+<script src="/index.js"></script>
 </body>
 </html>
